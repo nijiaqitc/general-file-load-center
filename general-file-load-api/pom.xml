@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>general-file-load-center</artifactId>
+        <groupId>com.njq.file.load</groupId>
+        <version>0.0.1-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.njq.file.load</groupId>
+    <artifactId>general-file-load-api</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <name>general-file-load-api</name>
+    <description>file api</description>
+    <packaging>jar</packaging>
+
+
+
+
+
+
+
+</project>
