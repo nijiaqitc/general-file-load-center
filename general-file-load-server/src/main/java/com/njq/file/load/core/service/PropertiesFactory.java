@@ -30,4 +30,12 @@ public class PropertiesFactory {
     }
 
 
+    public static String getFileUrl(Boolean flag){
+        if(flag){
+            return SpringContextUtil.getValue("debug.file.url");
+        }else{
+            return SpringContextUtil.getValue("file.url");
+        }
+    }
+
 }

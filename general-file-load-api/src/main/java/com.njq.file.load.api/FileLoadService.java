@@ -1,5 +1,7 @@
 package com.njq.file.load.api;
 
+import com.njq.file.load.api.model.DownLoadFileRequest;
+import com.njq.file.load.api.model.ReBackFileInfo;
 import com.njq.file.load.api.model.SaveFileInfo;
 import com.njq.file.load.api.model.UpFileInfoRequest;
 
@@ -18,4 +20,5 @@ public interface FileLoadService {
 
     SaveFileInfo reload(UpFileInfoRequest request);
 
+    ReBackFileInfo readFile(DownLoadFileRequest request);
 }

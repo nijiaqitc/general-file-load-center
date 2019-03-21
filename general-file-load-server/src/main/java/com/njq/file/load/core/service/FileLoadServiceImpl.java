@@ -4,6 +4,8 @@ import com.njq.common.util.encrypt.Base64Util;
 import com.njq.common.util.grab.UrlChangeUtil;
 import com.njq.common.util.string.IdGen;
 import com.njq.file.load.api.FileLoadService;
+import com.njq.file.load.api.model.DownLoadFileRequest;
+import com.njq.file.load.api.model.ReBackFileInfo;
 import com.njq.file.load.api.model.SaveFileInfo;
 import com.njq.file.load.api.model.UpFileInfoRequest;
 import org.apache.commons.lang3.tuple.Pair;
@@ -13,6 +15,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URLDecoder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -28,18 +33,17 @@ public class FileLoadServiceImpl implements FileLoadService {
     @Override
     public SaveFileInfo loadFile(UpFileInfoRequest request) {
         SaveFileInfo info = new SaveFileInfo();
+        String fileUrl = PropertiesFactory.getFileUrl(request.getDebugFlag());
         try {
-            String fileOldName = "";
             String src = request.getUrl();
             String shortName = request.getType().getValue();
             String savePlace = PropertiesFactory.getFilePlace(request.getDebugFlag());
+            String fileOldName = URLDecoder.decode(getOldName(src), "UTF-8");
             String place = getFilePlace(shortName, savePlace, fileOldName);
-            fileOldName = URLDecoder.decode(getOldName(src), "UTF-8");
             UrlChangeUtil.downLoad(src, savePlace + place, shortName);
-            Pair.of(true, "");
             info.setFileNewName(fileOldName);
             info.setFileOldName(fileOldName);
-            info.setFilePlace(getSrc(shortName, savePlace) + "/downLoadFile?file=" + fileOldName);
+            info.setFilePlace(fileUrl + place);
             info.setRealPlace(savePlace + place);
             info.setOldSrc(request.getUrl());
             info.setResultPair(Pair.of(true, ""));
@@ -116,7 +120,11 @@ public class FileLoadServiceImpl implements FileLoadService {
         String fileName = String.valueOf(IdGen.get().nextId());
         String[] imgName = oldFileName.split("\\.");
         if (imgName.length > 1) {
-            fileName += "." + imgName[1];
+            if (imgName[1].length() > 3) {
+                fileName += ".png";
+            } else {
+                fileName += "." + imgName[1];
+            }
         } else {
             fileName += ".png";
         }
@@ -142,5 +150,40 @@ public class FileLoadServiceImpl implements FileLoadService {
             dir.mkdirs();
         }
         return url;
+    }
+
+
+    @Override
+    public ReBackFileInfo readFile(DownLoadFileRequest request) {
+        InputStream is = null;
+        String url = PropertiesFactory.getFilePlace(false) + "/" + request.getShortname() + "/" + request.getDfolder() + "/" + request.getFile();
+        File f = new File(url);
+        ReBackFileInfo reBackFileInfo = new ReBackFileInfo();
+        /**
+         * 传输文件大小不能超过1M
+         */
+        if (f.exists() && f.length() > 1048576) {
+            return reBackFileInfo;
+        }
+        try {
+
+
+            is = new FileInputStream(f);
+            byte[] body = new byte[is.available()];
+            is.read(body);
+            reBackFileInfo.setBody(body);
+            reBackFileInfo.setName(f.getName());
+        } catch (Exception e) {
+            logger.error("下载文件出错：" + e.getMessage());
+        } finally {
+            try {
+                if (is != null) {
+                    is.close();
+                }
+            } catch (IOException e) {
+                logger.error("关闭流出错：" + e.getMessage());
+            }
+        }
+        return reBackFileInfo;
     }
 }
