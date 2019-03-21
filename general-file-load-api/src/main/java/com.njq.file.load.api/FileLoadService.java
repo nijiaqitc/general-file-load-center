@@ -2,8 +2,12 @@ package com.njq.file.load.api;
 
 import com.njq.file.load.api.model.DownLoadFileRequest;
 import com.njq.file.load.api.model.ReBackFileInfo;
+import com.njq.file.load.api.model.ResourceShareRequest;
 import com.njq.file.load.api.model.SaveFileInfo;
+import com.njq.file.load.api.model.UpBannerRequest;
+import com.njq.file.load.api.model.UpBase64Request;
 import com.njq.file.load.api.model.UpFileInfoRequest;
+import org.apache.commons.fileupload.FileItem;
 
 /**
  * @author: nijiaqi
@@ -21,4 +25,12 @@ public interface FileLoadService {
     SaveFileInfo reload(UpFileInfoRequest request);
 
     ReBackFileInfo readFile(DownLoadFileRequest request);
+
+    SaveFileInfo upBase64(UpBase64Request request);
+
+    SaveFileInfo upBanner(UpBannerRequest request);
+
+    SaveFileInfo upyxlFile(UpBannerRequest request);
+
+    SaveFileInfo upShareFile(ResourceShareRequest request);
 }

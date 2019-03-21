@@ -1,13 +1,20 @@
 package com.njq.file.load.core.service;
 
+import com.njq.common.util.date.DateUtil;
 import com.njq.common.util.encrypt.Base64Util;
 import com.njq.common.util.grab.UrlChangeUtil;
+import com.njq.common.util.image.ImageUtil;
+import com.njq.common.util.image.UpPicUtil;
 import com.njq.common.util.string.IdGen;
 import com.njq.file.load.api.FileLoadService;
 import com.njq.file.load.api.model.DownLoadFileRequest;
 import com.njq.file.load.api.model.ReBackFileInfo;
+import com.njq.file.load.api.model.ResourceShareRequest;
 import com.njq.file.load.api.model.SaveFileInfo;
+import com.njq.file.load.api.model.UpBannerRequest;
+import com.njq.file.load.api.model.UpBase64Request;
 import com.njq.file.load.api.model.UpFileInfoRequest;
+import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -166,8 +173,6 @@ public class FileLoadServiceImpl implements FileLoadService {
             return reBackFileInfo;
         }
         try {
-
-
             is = new FileInputStream(f);
             byte[] body = new byte[is.available()];
             is.read(body);
@@ -185,5 +190,115 @@ public class FileLoadServiceImpl implements FileLoadService {
             }
         }
         return reBackFileInfo;
+    }
+
+    @Override
+    public SaveFileInfo upBase64(UpBase64Request request) {
+        SaveFileInfo fileInfo = new SaveFileInfo();
+        String picName = IdGen.get().toString();
+        String[] spstr = request.getBase64Data().split("base64,");
+        if (spstr.length < 2) {
+            return fileInfo;
+        }
+        String imagePlace = PropertiesFactory.getImagePlace(true);
+        String imageUrl = PropertiesFactory.getImageUrl(true);
+        String picPlace = Base64Util.GenerateImage(spstr[1], picName, imagePlace);
+        fileInfo.setFileNewName(picName);
+        fileInfo.setFileOldName(picName);
+        fileInfo.setFilePlace(imageUrl + picPlace);
+        fileInfo.setRealPlace(imagePlace + picPlace);
+        fileInfo.setResultPair(Pair.of(true, ""));
+        return fileInfo;
+    }
+
+    @Override
+    public SaveFileInfo upBanner(UpBannerRequest request) {
+        SaveFileInfo fileInfo = new SaveFileInfo();
+        try {
+            if (!request.getItem().isFormField()) {
+                // 获得文件名
+                String fileName = request.getItem().getName();
+                System.out.println(fileName);
+                // 该方法在某些平台(操作系统),会返回路径+文件名/Users/njq
+                fileName = fileName.substring(fileName.lastIndexOf("/") + 1);
+                String filePlace = PropertiesFactory.getImagePlace(false) + "/banner";
+                File fileFolder = new File(filePlace);
+                // 创建目录
+                if (!fileFolder.exists()) {
+                    fileFolder.mkdirs();
+                }
+                filePlace += "/" + fileName;
+                File file = new File(filePlace);
+                if (!file.exists()) {
+                    request.getItem().write(file);
+                    fileInfo.setFileOldName(fileName);
+                    fileInfo.setFileNewName(fileName);
+                    fileInfo.setFilePlace(PropertiesFactory.getImageUrl(false));
+                }
+            }
+        } catch (Exception e) {
+            logger.error("上传失败", e);
+        }
+        return fileInfo;
+    }
+
+    @Override
+    public SaveFileInfo upyxlFile(UpBannerRequest request) {
+        SaveFileInfo fileInfo = new SaveFileInfo();
+        try {
+            FileItem item = request.getItem();
+            String dd = DateUtil.toDateString8(new Date());
+            String fileName;
+            // 如果是文件说明是上传的图片，否则就是网络图片
+            if (!item.isFormField()) {
+                fileName = UpPicUtil.upBlobPic(item, PropertiesFactory.getImagePlace(request.getDebugFlag()) + "/yxl/" + dd);
+            } else if (item.getString().startsWith("data")) {
+                fileName = UpPicUtil.upBase64Pic(item.getString(), PropertiesFactory.getImagePlace(request.getDebugFlag()) + "/yxl/" + dd);
+            } else {
+                // 上传前先判断当前图片是否是本站的图片
+                String url = item.getString();
+                if (url.startsWith(PropertiesFactory.getImageUrl(request.getDebugFlag()))) {
+                    String s[] = url.split("dialog/emotion");
+                    if (s.length > 1) {
+                        fileName = PropertiesFactory.getImageUrl(request.getDebugFlag()) + "/uploadImage" + s[1];
+                    } else {
+                        // 进行图片下载
+                        fileName = UpPicUtil.upIntenetPic(item.getString(),
+                                PropertiesFactory.getImagePlace(request.getDebugFlag()) + "/yxl/" + dd);
+                    }
+                } else if (url.startsWith(PropertiesFactory.getImageUrl(request.getDebugFlag()))) {
+                    fileName = url;
+                } else {
+                    // 进行图片下载
+                    fileName = UpPicUtil.upIntenetPic(item.getString(),
+                            PropertiesFactory.getImagePlace(request.getDebugFlag()) + "/yxl/" + dd);
+                }
+            }
+            fileInfo.setFileNewName(item.getFieldName());
+            fileInfo.setFileOldName(item.getFieldName());
+            fileInfo.setFilePlace(PropertiesFactory.getImageUrl(request.getDebugFlag()) + "/uploadImage/yxl/" + dd + "/" + fileName);
+        } catch (Exception e) {
+            logger.error("上传失败", e);
+        }
+        return fileInfo;
+    }
+
+    @Override
+    public SaveFileInfo upShareFile(ResourceShareRequest request) {
+        String realPath = PropertiesFactory.getImagePlace(request.getDebugFlag())
+                + "/shareResources/total/"
+                + request.getShareTypeOne()
+                + "/" + request.getShareTypeTwo()
+                + "/" + request.getShareTypeThree();
+        String picPlaceA = Base64Util.GenerateImage(request.getImgStr(),
+                request.getName(), realPath, null);
+        File file1 = new File(realPath + "/" + picPlaceA);
+        //生成缩略图
+        ImageUtil.scale(file1, realPath + "/" + request.getSkeletonize() + ".jpg", request.getWidth(), request.getHeight());
+        file1.delete();
+        SaveFileInfo fileInfo = new SaveFileInfo();
+        String str = "/uploadImage" + "/shareResources/total/" + request.getShareTypeOne() + "/" + request.getShareTypeTwo() + "/" + request.getShareTypeThree() + "/";
+        fileInfo.setFilePlace(str);
+        return fileInfo;
     }
 }
