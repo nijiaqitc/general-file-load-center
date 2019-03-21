@@ -4,12 +4,13 @@ import com.njq.common.enumreg.channel.ChannelType;
 
 /**
  * @author: nijiaqi
- * @date: 2019/3/19
+ * @date: 2019/3/21
  */
 public final class UpFileInfoRequestBuilder {
     private String url;
     private ChannelType type;
     private String realSavePlace;
+    private Boolean debugFlag = false;
 
     public UpFileInfoRequestBuilder() {
     }
@@ -33,11 +34,17 @@ public final class UpFileInfoRequestBuilder {
         return this;
     }
 
+    public UpFileInfoRequestBuilder ofDebugFlag(Boolean debugFlag) {
+        this.debugFlag = debugFlag;
+        return this;
+    }
+
     public UpFileInfoRequest build() {
         UpFileInfoRequest upFileInfoRequest = new UpFileInfoRequest();
         upFileInfoRequest.setUrl(url);
         upFileInfoRequest.setType(type);
         upFileInfoRequest.setRealSavePlace(realSavePlace);
+        upFileInfoRequest.setDebugFlag(debugFlag);
         return upFileInfoRequest;
     }
 }

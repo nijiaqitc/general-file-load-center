@@ -14,6 +14,7 @@ public class UpFileInfoRequest implements Serializable {
     private String url;
     private ChannelType type;
     private String realSavePlace;
+    private Boolean debugFlag = false;
 
     public String getUrl() {
         return url;
@@ -39,12 +40,21 @@ public class UpFileInfoRequest implements Serializable {
         this.realSavePlace = realSavePlace;
     }
 
+    public Boolean getDebugFlag() {
+        return debugFlag;
+    }
+
+    public void setDebugFlag(Boolean debugFlag) {
+        this.debugFlag = debugFlag;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.JSON_STYLE)
                 .append("url", url)
                 .append("type", type)
                 .append("realSavePlace", realSavePlace)
+                .append("debugFlag", debugFlag)
                 .toString();
     }
 }

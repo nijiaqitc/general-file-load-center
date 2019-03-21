@@ -13,9 +13,7 @@
 
     <!-- 使用zookeeper注册中心暴露服务地址 -->
     <!-- 注册到这里 -->
-    <dubbo:registry protocol="zookeeper" address="${dubbo.registry.address}" id="zookeeperService"/>
-    <!-- 到这里调用 -->
-    <dubbo:registry protocol="zookeeper" address="${dubbo.registry.address.client}" id="zookeeperClient"/>
+    <dubbo:registry  address="N/A" id="zookeeperService"/>
 
     <!-- 用dubbo协议在30900端口暴露服务 -->
     <dubbo:protocol name="dubbo" port="${dubbo.application.port}" dispather="all" threadpool="cached" threads="5000"/>
