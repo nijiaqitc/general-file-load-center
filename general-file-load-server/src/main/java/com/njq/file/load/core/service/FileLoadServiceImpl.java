@@ -9,7 +9,6 @@ import com.njq.file.load.api.model.UpFileInfoRequest;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -25,12 +24,6 @@ import java.util.Date;
 @Service
 public class FileLoadServiceImpl implements FileLoadService {
     private static final Logger logger = LoggerFactory.getLogger(FileLoadServiceImpl.class);
-    @Value("${image.place}")
-    private String imageSavePlace;
-    @Value("${image.url}")
-    private String imageUrl;
-    @Value("${file.place}")
-    private String filePlace;
 
     @Override
     public SaveFileInfo loadFile(UpFileInfoRequest request) {
@@ -39,7 +32,7 @@ public class FileLoadServiceImpl implements FileLoadService {
             String fileOldName = "";
             String src = request.getUrl();
             String shortName = request.getType().getValue();
-            String savePlace = filePlace;
+            String savePlace = PropertiesFactory.getFilePlace(request.getDebugFlag());
             String place = getFilePlace(shortName, savePlace, fileOldName);
             fileOldName = URLDecoder.decode(getOldName(src), "UTF-8");
             UrlChangeUtil.downLoad(src, savePlace + place, shortName);
@@ -71,6 +64,8 @@ public class FileLoadServiceImpl implements FileLoadService {
 
     @Override
     public SaveFileInfo loadPic(UpFileInfoRequest request) {
+        String imageSavePlace = PropertiesFactory.getImagePlace(request.getDebugFlag());
+        String imageUrl = PropertiesFactory.getImageUrl(request.getDebugFlag());
         String fileOldName = getOldName(request.getUrl());
         String fileNewName = getNewName(fileOldName);
         String place = getFilePlace(request.getType().getValue(), imageSavePlace, fileNewName);
@@ -91,6 +86,8 @@ public class FileLoadServiceImpl implements FileLoadService {
 
     @Override
     public SaveFileInfo loadBase64(UpFileInfoRequest request) {
+        String imageUrl = PropertiesFactory.getImageUrl(request.getDebugFlag());
+        String imageSavePlace = PropertiesFactory.getImagePlace(request.getDebugFlag());
         String picName = IdGen.get().toString();
         String picPlace = Base64Util.GenerateImage(request.getUrl().split("base64,")[1], picName, imageSavePlace);
         Pair<Boolean, String> resultPair = null;
