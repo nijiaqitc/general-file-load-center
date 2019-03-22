@@ -7,6 +7,7 @@ import com.njq.common.util.image.ImageUtil;
 import com.njq.common.util.image.UpPicUtil;
 import com.njq.common.util.string.IdGen;
 import com.njq.file.load.api.FileLoadService;
+import com.njq.file.load.api.model.ByteRequest;
 import com.njq.file.load.api.model.DownLoadFileRequest;
 import com.njq.file.load.api.model.ReBackFileInfo;
 import com.njq.file.load.api.model.ResourceShareRequest;
@@ -243,7 +244,7 @@ public class FileLoadServiceImpl implements FileLoadService {
     }
 
     @Override
-    public SaveFileInfo upyxlFile(UpBannerRequest request) {
+    public SaveFileInfo upYxlFile(UpBannerRequest request) {
         SaveFileInfo fileInfo = new SaveFileInfo();
         try {
             FileItem item = request.getItem();
@@ -301,4 +302,37 @@ public class FileLoadServiceImpl implements FileLoadService {
         fileInfo.setFilePlace(str);
         return fileInfo;
     }
+
+    @Override
+    public SaveFileInfo upYxlByteFile(ByteRequest request) {
+        String dd = DateUtil.toDateString8(new Date());
+        String newName = getNewName(request.getName());
+        return upByteFile(request, "/"+request.getType().getValue()+"/" + dd, newName);
+    }
+
+
+    private SaveFileInfo upByteFile(ByteRequest request, String folder, String newName) {
+        SaveFileInfo fileInfo = new SaveFileInfo();
+        String tempFilePlace = PropertiesFactory.getImagePlace(request.getDebugFlag()) + folder;
+        File fileFolder = new File(tempFilePlace);
+        //创建目录
+        if (!fileFolder.exists()) {
+            fileFolder.mkdirs();
+        }
+        tempFilePlace += "/" + newName;
+        fileInfo.setFileNewName(getNewName(request.getName()));
+        fileInfo.setFileOldName(request.getName());
+        File file = new File(tempFilePlace);
+        if (!file.exists()) {
+            UpPicUtil.upByte(request.getData(), tempFilePlace);
+            fileInfo.setFilePlace(PropertiesFactory.getImageUrl(request.getDebugFlag()) + folder + "/" + newName);
+            fileInfo.setRealPlace(tempFilePlace);
+            fileInfo.setResultPair(Pair.of(true, ""));
+        } else {
+            fileInfo.setResultPair(Pair.of(false, "文件已存在，上传失败！"));
+        }
+        return fileInfo;
+    }
+
+
 }

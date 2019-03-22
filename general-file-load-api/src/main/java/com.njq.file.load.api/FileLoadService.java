@@ -1,5 +1,6 @@
 package com.njq.file.load.api;
 
+import com.njq.file.load.api.model.ByteRequest;
 import com.njq.file.load.api.model.DownLoadFileRequest;
 import com.njq.file.load.api.model.ReBackFileInfo;
 import com.njq.file.load.api.model.ResourceShareRequest;
@@ -30,7 +31,12 @@ public interface FileLoadService {
 
     SaveFileInfo upBanner(UpBannerRequest request);
 
-    SaveFileInfo upyxlFile(UpBannerRequest request);
+    @Deprecated
+    SaveFileInfo upYxlFile(UpBannerRequest request);
 
     SaveFileInfo upShareFile(ResourceShareRequest request);
+
+    SaveFileInfo upYxlByteFile(ByteRequest request);
+
+
 }
