@@ -310,6 +310,10 @@ public class FileLoadServiceImpl implements FileLoadService {
         return upByteFile(request, "/"+request.getType().getValue()+"/" + dd, newName);
     }
 
+    @Override
+    public SaveFileInfo upBannerByteFile(ByteRequest request) {
+        return upByteFile(request, "/"+request.getType().getValue(), request.getName());
+    }
 
     private SaveFileInfo upByteFile(ByteRequest request, String folder, String newName) {
         SaveFileInfo fileInfo = new SaveFileInfo();

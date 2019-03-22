@@ -38,5 +38,5 @@ public interface FileLoadService {
 
     SaveFileInfo upYxlByteFile(ByteRequest request);
 
-
+    SaveFileInfo upBannerByteFile(ByteRequest request);
 }
