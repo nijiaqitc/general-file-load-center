@@ -7,14 +7,7 @@ import com.njq.common.util.image.ImageUtil;
 import com.njq.common.util.image.UpPicUtil;
 import com.njq.common.util.string.IdGen;
 import com.njq.file.load.api.FileLoadService;
-import com.njq.file.load.api.model.ByteRequest;
-import com.njq.file.load.api.model.DownLoadFileRequest;
-import com.njq.file.load.api.model.ReBackFileInfo;
-import com.njq.file.load.api.model.ResourceShareRequest;
-import com.njq.file.load.api.model.SaveFileInfo;
-import com.njq.file.load.api.model.UpBannerRequest;
-import com.njq.file.load.api.model.UpBase64Request;
-import com.njq.file.load.api.model.UpFileInfoRequest;
+import com.njq.file.load.api.model.*;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
@@ -66,6 +59,7 @@ public class FileLoadServiceImpl implements FileLoadService {
     public SaveFileInfo reload(UpFileInfoRequest request) {
         SaveFileInfo info = new SaveFileInfo();
         try {
+            logger.info("reloadPic---:"+request.getUrl());
             UrlChangeUtil.downLoad(request.getUrl(), request.getRealSavePlace(), request.getType().getValue());
             info.setResultPair(Pair.of(true, ""));
         } catch (Exception e) {
@@ -76,6 +70,7 @@ public class FileLoadServiceImpl implements FileLoadService {
 
     @Override
     public SaveFileInfo loadPic(UpFileInfoRequest request) {
+        logger.info("loadPIc---:"+request.getUrl());
         String imageSavePlace = PropertiesFactory.getImagePlace(request.getDebugFlag());
         String imageUrl = PropertiesFactory.getImageUrl(request.getDebugFlag());
         String fileOldName = getOldName(request.getUrl());
@@ -98,6 +93,7 @@ public class FileLoadServiceImpl implements FileLoadService {
 
     @Override
     public SaveFileInfo loadBase64(UpFileInfoRequest request) {
+        logger.info("loadbase64Pic---:"+request.getUrl());
         String imageUrl = PropertiesFactory.getImageUrl(request.getDebugFlag());
         String imageSavePlace = PropertiesFactory.getImagePlace(request.getDebugFlag());
         String picName = IdGen.get().toString();
