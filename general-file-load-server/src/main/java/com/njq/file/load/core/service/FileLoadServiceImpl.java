@@ -12,9 +12,11 @@ import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import javax.annotation.Resource;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -31,6 +33,10 @@ import java.util.Date;
 public class FileLoadServiceImpl implements FileLoadService {
     private static final Logger logger = LoggerFactory.getLogger(FileLoadServiceImpl.class);
 
+    @Resource
+    private ThreadPoolTaskExecutor loadFileTaskExecutor;
+
+
     @Override
     public SaveFileInfo loadFile(UpFileInfoRequest request) {
         SaveFileInfo info = new SaveFileInfo();
@@ -41,13 +47,22 @@ public class FileLoadServiceImpl implements FileLoadService {
             String savePlace = PropertiesFactory.getFilePlace(request.getDebugFlag());
             String fileOldName = URLDecoder.decode(getOldName(src), "UTF-8");
             String place = getFilePlace(shortName, savePlace, fileOldName);
-            UrlChangeUtil.downLoad(src, savePlace + place, shortName);
             info.setFileNewName(fileOldName);
             info.setFileOldName(fileOldName);
             info.setFilePlace(fileUrl + place);
             info.setRealPlace(savePlace + place);
             info.setOldSrc(request.getUrl());
-            info.setResultPair(Pair.of(true, ""));
+            info.setResultPair(Pair.of(false, "正在读取..."));
+//            info.setResultPair(Pair.of(true, ""));
+
+            loadFileTaskExecutor.submit(()->{
+                try {
+                    UrlChangeUtil.downLoad(src, savePlace + place, shortName);
+                } catch (Exception e) {
+                    logger.error("下载文件出错", e);
+                }
+
+            });
         } catch (Exception e) {
             info.setResultPair(Pair.of(false, e.getMessage()));
             logger.error("下载出错", e);
