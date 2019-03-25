@@ -25,6 +25,8 @@ public interface FileLoadService {
 
     SaveFileInfo reload(UpFileInfoRequest request);
 
+    SaveFileInfo fileQuery(UpFileInfoRequest request);
+
     ReBackFileInfo readFile(DownLoadFileRequest request);
 
     SaveFileInfo upBase64(UpBase64Request request);
