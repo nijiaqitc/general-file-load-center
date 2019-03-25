@@ -61,8 +61,6 @@ public class FileLoadServiceImpl implements FileLoadService {
             info.setRealPlace(savePlace + place);
             info.setOldSrc(request.getUrl());
             info.setResultPair(Pair.of(false, "正在读取..."));
-//            info.setResultPair(Pair.of(true, ""));
-
             loadFileTaskExecutor.submit(() -> {
                 try {
                     UrlChangeUtil.downLoad(src, savePlace + place, shortName);
@@ -88,8 +86,8 @@ public class FileLoadServiceImpl implements FileLoadService {
                 return info;
             }
             logger.info("reloadPic---:" + request.getUrl());
-            UrlChangeUtil.downLoad(request.getUrl(), request.getRealSavePlace(), request.getType().getValue());
             info.setResultPair(Pair.of(true, ""));
+            UrlChangeUtil.downLoad(request.getUrl(), request.getRealSavePlace(), request.getType().getValue());
         } catch (Exception e) {
             info.setResultPair(Pair.of(false, e.getMessage()));
         }
@@ -120,13 +118,13 @@ public class FileLoadServiceImpl implements FileLoadService {
         String place = getFilePlace(request.getType().getValue(), imageSavePlace, fileNewName);
         SaveFileInfo info = new SaveFileInfo();
         try {
-            UrlChangeUtil.downLoad(request.getUrl(), imageSavePlace + place, request.getType().getValue());
             info.setFileNewName(fileNewName);
             info.setFileOldName(fileOldName);
             info.setFilePlace(imageUrl + place);
             info.setRealPlace(imageSavePlace + place);
             info.setOldSrc(request.getUrl());
             info.setResultPair(Pair.of(true, ""));
+            UrlChangeUtil.downLoad(request.getUrl(), imageSavePlace + place, request.getType().getValue());
         } catch (Exception e) {
             info.setResultPair(Pair.of(false, e.getMessage()));
         }
