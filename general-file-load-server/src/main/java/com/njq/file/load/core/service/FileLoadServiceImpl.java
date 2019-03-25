@@ -6,6 +6,7 @@ import com.njq.common.util.grab.UrlChangeUtil;
 import com.njq.common.util.image.ImageUtil;
 import com.njq.common.util.image.UpPicUtil;
 import com.njq.common.util.string.IdGen;
+import com.njq.common.util.string.StringUtil;
 import com.njq.file.load.api.FileLoadService;
 import com.njq.file.load.api.model.ByteRequest;
 import com.njq.file.load.api.model.DownLoadFileRequest;
@@ -81,6 +82,11 @@ public class FileLoadServiceImpl implements FileLoadService {
     public SaveFileInfo reload(UpFileInfoRequest request) {
         SaveFileInfo info = new SaveFileInfo();
         try {
+            SaveFileInfo s = fileQuery(request);
+            if(StringUtil.isEmpty(s.getFileNewName())){
+                info.setResultPair(Pair.of(true, ""));
+                return info;
+            }
             logger.info("reloadPic---:" + request.getUrl());
             UrlChangeUtil.downLoad(request.getUrl(), request.getRealSavePlace(), request.getType().getValue());
             info.setResultPair(Pair.of(true, ""));
