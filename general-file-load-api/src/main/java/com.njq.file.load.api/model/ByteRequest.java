@@ -8,12 +8,10 @@ import java.io.Serializable;
  * @author: nijiaqi
  * @date: 2019/3/22
  */
-public class ByteRequest implements Serializable {
-
+public class ByteRequest extends BaseRequest implements Serializable {
     private String name;
     private byte[] data;
     private ChannelType type;
-    private Boolean debugFlag = false;
 
     public String getName() {
         return name;
@@ -29,14 +27,6 @@ public class ByteRequest implements Serializable {
 
     public void setData(byte[] data) {
         this.data = data;
-    }
-
-    public Boolean getDebugFlag() {
-        return debugFlag;
-    }
-
-    public void setDebugFlag(Boolean debugFlag) {
-        this.debugFlag = debugFlag;
     }
 
     public ChannelType getType() {

@@ -2,10 +2,12 @@ package com.njq.file.load.api.model;
 
 /**
  * @author: nijiaqi
- * @date: 2019/3/21
+ * @date: 2019/3/26
  */
 public final class DownLoadFileRequestBuilder {
+    private Boolean debugFlag = false;
     private String file;
+    private String cookieStr;
     private String shortname;
     private String dfolder;
 
@@ -16,8 +18,18 @@ public final class DownLoadFileRequestBuilder {
         return new DownLoadFileRequestBuilder();
     }
 
+    public DownLoadFileRequestBuilder ofDebugFlag(Boolean debugFlag) {
+        this.debugFlag = debugFlag;
+        return this;
+    }
+
     public DownLoadFileRequestBuilder ofFile(String file) {
         this.file = file;
+        return this;
+    }
+
+    public DownLoadFileRequestBuilder ofCookieStr(String cookieStr) {
+        this.cookieStr = cookieStr;
         return this;
     }
 
@@ -33,7 +45,9 @@ public final class DownLoadFileRequestBuilder {
 
     public DownLoadFileRequest build() {
         DownLoadFileRequest downLoadFileRequest = new DownLoadFileRequest();
+        downLoadFileRequest.setDebugFlag(debugFlag);
         downLoadFileRequest.setFile(file);
+        downLoadFileRequest.setCookieStr(cookieStr);
         downLoadFileRequest.setShortname(shortname);
         downLoadFileRequest.setDfolder(dfolder);
         return downLoadFileRequest;

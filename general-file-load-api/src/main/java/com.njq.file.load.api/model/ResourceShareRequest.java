@@ -6,7 +6,7 @@ import java.io.Serializable;
  * @author: nijiaqi
  * @date: 2019/3/21
  */
-public class ResourceShareRequest implements Serializable {
+public class ResourceShareRequest extends BaseRequest implements Serializable {
     private String imgStr;
     private String name;
     private String place;
@@ -16,8 +16,6 @@ public class ResourceShareRequest implements Serializable {
     private int width;
     private int height;
     private String skeletonize;
-
-    private Boolean debugFlag = false;
 
     public String getImgStr() {
         return imgStr;
@@ -41,14 +39,6 @@ public class ResourceShareRequest implements Serializable {
 
     public void setPlace(String place) {
         this.place = place;
-    }
-
-    public Boolean getDebugFlag() {
-        return debugFlag;
-    }
-
-    public void setDebugFlag(Boolean debugFlag) {
-        this.debugFlag = debugFlag;
     }
 
     public Long getShareTypeOne() {

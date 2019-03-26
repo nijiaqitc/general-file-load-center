@@ -4,19 +4,30 @@ import com.njq.common.enumreg.channel.ChannelType;
 
 /**
  * @author: nijiaqi
- * @date: 2019/3/21
+ * @date: 2019/3/26
  */
 public final class UpFileInfoRequestBuilder {
+    private Boolean debugFlag = false;
+    private String cookieStr;
     private String url;
     private ChannelType type;
     private String realSavePlace;
-    private Boolean debugFlag = false;
 
-    public UpFileInfoRequestBuilder() {
+    private UpFileInfoRequestBuilder() {
     }
 
     public static UpFileInfoRequestBuilder anUpFileInfoRequest() {
         return new UpFileInfoRequestBuilder();
+    }
+
+    public UpFileInfoRequestBuilder ofDebugFlag(Boolean debugFlag) {
+        this.debugFlag = debugFlag;
+        return this;
+    }
+
+    public UpFileInfoRequestBuilder ofCookieStr(String cookieStr) {
+        this.cookieStr = cookieStr;
+        return this;
     }
 
     public UpFileInfoRequestBuilder ofUrl(String url) {
@@ -34,17 +45,13 @@ public final class UpFileInfoRequestBuilder {
         return this;
     }
 
-    public UpFileInfoRequestBuilder ofDebugFlag(Boolean debugFlag) {
-        this.debugFlag = debugFlag;
-        return this;
-    }
-
     public UpFileInfoRequest build() {
         UpFileInfoRequest upFileInfoRequest = new UpFileInfoRequest();
+        upFileInfoRequest.setDebugFlag(debugFlag);
+        upFileInfoRequest.setCookieStr(cookieStr);
         upFileInfoRequest.setUrl(url);
         upFileInfoRequest.setType(type);
         upFileInfoRequest.setRealSavePlace(realSavePlace);
-        upFileInfoRequest.setDebugFlag(debugFlag);
         return upFileInfoRequest;
     }
 }

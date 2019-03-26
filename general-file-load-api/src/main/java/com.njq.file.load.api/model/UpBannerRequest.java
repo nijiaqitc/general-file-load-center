@@ -8,9 +8,8 @@ import java.io.Serializable;
  * @author: nijiaqi
  * @date: 2019/3/21
  */
-public class UpBannerRequest implements Serializable {
+public class UpBannerRequest extends BaseRequest implements Serializable {
     private FileItem item;
-    private Boolean debugFlag = false;
 
     public FileItem getItem() {
         return item;
@@ -20,11 +19,4 @@ public class UpBannerRequest implements Serializable {
         this.item = item;
     }
 
-    public Boolean getDebugFlag() {
-        return debugFlag;
-    }
-
-    public void setDebugFlag(Boolean debugFlag) {
-        this.debugFlag = debugFlag;
-    }
 }

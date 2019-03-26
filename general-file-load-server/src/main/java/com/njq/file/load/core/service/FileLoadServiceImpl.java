@@ -1,5 +1,6 @@
 package com.njq.file.load.core.service;
 
+import com.njq.common.exception.BaseKnownException;
 import com.njq.common.util.date.DateUtil;
 import com.njq.common.util.encrypt.Base64Util;
 import com.njq.common.util.grab.UrlChangeUtil;
@@ -63,7 +64,7 @@ public class FileLoadServiceImpl implements FileLoadService {
             info.setResultPair(Pair.of(false, "正在读取..."));
             loadFileTaskExecutor.submit(() -> {
                 try {
-                    UrlChangeUtil.downLoad(src, savePlace + place, shortName);
+                    UrlChangeUtil.downLoad(src, savePlace + place, request.getCookieStr());
                 } catch (Exception e) {
                     logger.error("下载文件出错", e);
                 }
@@ -80,15 +81,11 @@ public class FileLoadServiceImpl implements FileLoadService {
     public SaveFileInfo reload(UpFileInfoRequest request) {
         SaveFileInfo info = new SaveFileInfo();
         try {
-            SaveFileInfo s = fileQuery(request);
-            if(StringUtil.isEmpty(s.getFileNewName())){
-                info.setResultPair(Pair.of(true, ""));
-                return info;
-            }
             logger.info("reloadPic---:" + request.getUrl());
             info.setResultPair(Pair.of(true, ""));
-            UrlChangeUtil.downLoad(request.getUrl(), request.getRealSavePlace(), request.getType().getValue());
+            UrlChangeUtil.downLoad(request.getUrl(), request.getRealSavePlace(), request.getCookieStr());
         } catch (Exception e) {
+            logger.error("重新加载出错-------：" + e.getMessage());
             info.setResultPair(Pair.of(false, e.getMessage()));
         }
         return info;
@@ -100,12 +97,34 @@ public class FileLoadServiceImpl implements FileLoadService {
         SaveFileInfo info = new SaveFileInfo();
         if (f.exists()) {
             info.setFileNewName(f.getName());
-        }else{
-            loadFileTaskExecutor.submit(()->{
+            info.setResultPair(Pair.of(true, ""));
+        } else {
+            checkAndCreateFolder(request.getRealSavePlace());
+            loadFileTaskExecutor.submit(() -> {
                 reload(request);
             });
         }
         return info;
+    }
+
+    /**
+     * 检查文件夹是否存在
+     *
+     * @param filePlace
+     */
+    private void checkAndCreateFolder(String filePlace) {
+        if (StringUtil.isEmpty(filePlace)) {
+            throw new BaseKnownException("地址不存在");
+        }
+        String[] str = filePlace.split("\\/");
+        if (str.length < 2) {
+            throw new BaseKnownException("地址不存在");
+        }
+        String folderStr = filePlace.substring(0, (filePlace.length() - str[str.length - 1].length() - 1));
+        File dir = new File(folderStr);
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
     }
 
     @Override
@@ -123,8 +142,15 @@ public class FileLoadServiceImpl implements FileLoadService {
             info.setFilePlace(imageUrl + place);
             info.setRealPlace(imageSavePlace + place);
             info.setOldSrc(request.getUrl());
-            info.setResultPair(Pair.of(true, ""));
-            UrlChangeUtil.downLoad(request.getUrl(), imageSavePlace + place, request.getType().getValue());
+            info.setResultPair(Pair.of(false, "异步读取图片中..."));
+            loadFileTaskExecutor.submit(() -> {
+                try {
+                    logger.info("picLoading---:" + request.getUrl());
+                    UrlChangeUtil.downLoad(request.getUrl(), imageSavePlace + place, request.getCookieStr());
+                } catch (Exception e) {
+                    logger.error("下载图片出错", e);
+                }
+            });
         } catch (Exception e) {
             info.setResultPair(Pair.of(false, e.getMessage()));
         }

@@ -6,7 +6,7 @@ import java.io.Serializable;
  * @author: nijiaqi
  * @date: 2019/3/21
  */
-public class DownLoadFileRequest implements Serializable {
+public class DownLoadFileRequest extends BaseRequest implements Serializable {
     private String file;
     private String shortname;
     private String dfolder;

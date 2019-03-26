@@ -4,19 +4,30 @@ import com.njq.common.enumreg.channel.ChannelType;
 
 /**
  * @author: nijiaqi
- * @date: 2019/3/22
+ * @date: 2019/3/26
  */
 public final class ByteRequestBuilder {
+    private Boolean debugFlag = false;
+    private String cookieStr;
     private String name;
     private byte[] data;
     private ChannelType type;
-    private Boolean debugFlag = false;
 
     private ByteRequestBuilder() {
     }
 
     public static ByteRequestBuilder aByteRequest() {
         return new ByteRequestBuilder();
+    }
+
+    public ByteRequestBuilder ofDebugFlag(Boolean debugFlag) {
+        this.debugFlag = debugFlag;
+        return this;
+    }
+
+    public ByteRequestBuilder ofCookieStr(String cookieStr) {
+        this.cookieStr = cookieStr;
+        return this;
     }
 
     public ByteRequestBuilder ofName(String name) {
@@ -34,17 +45,13 @@ public final class ByteRequestBuilder {
         return this;
     }
 
-    public ByteRequestBuilder ofDebugFlag(Boolean debugFlag) {
-        this.debugFlag = debugFlag;
-        return this;
-    }
-
     public ByteRequest build() {
         ByteRequest byteRequest = new ByteRequest();
+        byteRequest.setDebugFlag(debugFlag);
+        byteRequest.setCookieStr(cookieStr);
         byteRequest.setName(name);
         byteRequest.setData(data);
         byteRequest.setType(type);
-        byteRequest.setDebugFlag(debugFlag);
         return byteRequest;
     }
 }

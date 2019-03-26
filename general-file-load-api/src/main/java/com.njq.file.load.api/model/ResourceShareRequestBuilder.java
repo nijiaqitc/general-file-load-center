@@ -2,10 +2,12 @@ package com.njq.file.load.api.model;
 
 /**
  * @author: nijiaqi
- * @date: 2019/3/21
+ * @date: 2019/3/26
  */
 public final class ResourceShareRequestBuilder {
+    private Boolean debugFlag = false;
     private String imgStr;
+    private String cookieStr;
     private String name;
     private String place;
     private Long shareTypeOne;
@@ -14,7 +16,6 @@ public final class ResourceShareRequestBuilder {
     private int width;
     private int height;
     private String skeletonize;
-    private Boolean debugFlag = false;
 
     private ResourceShareRequestBuilder() {
     }
@@ -23,8 +24,18 @@ public final class ResourceShareRequestBuilder {
         return new ResourceShareRequestBuilder();
     }
 
+    public ResourceShareRequestBuilder ofDebugFlag(Boolean debugFlag) {
+        this.debugFlag = debugFlag;
+        return this;
+    }
+
     public ResourceShareRequestBuilder ofImgStr(String imgStr) {
         this.imgStr = imgStr;
+        return this;
+    }
+
+    public ResourceShareRequestBuilder ofCookieStr(String cookieStr) {
+        this.cookieStr = cookieStr;
         return this;
     }
 
@@ -68,14 +79,11 @@ public final class ResourceShareRequestBuilder {
         return this;
     }
 
-    public ResourceShareRequestBuilder ofDebugFlag(Boolean debugFlag) {
-        this.debugFlag = debugFlag;
-        return this;
-    }
-
     public ResourceShareRequest build() {
         ResourceShareRequest resourceShareRequest = new ResourceShareRequest();
+        resourceShareRequest.setDebugFlag(debugFlag);
         resourceShareRequest.setImgStr(imgStr);
+        resourceShareRequest.setCookieStr(cookieStr);
         resourceShareRequest.setName(name);
         resourceShareRequest.setPlace(place);
         resourceShareRequest.setShareTypeOne(shareTypeOne);
@@ -84,7 +92,6 @@ public final class ResourceShareRequestBuilder {
         resourceShareRequest.setWidth(width);
         resourceShareRequest.setHeight(height);
         resourceShareRequest.setSkeletonize(skeletonize);
-        resourceShareRequest.setDebugFlag(debugFlag);
         return resourceShareRequest;
     }
 }
