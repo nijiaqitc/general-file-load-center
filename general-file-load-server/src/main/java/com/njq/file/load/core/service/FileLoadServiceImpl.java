@@ -162,7 +162,7 @@ public class FileLoadServiceImpl implements FileLoadService {
         logger.info("loadbase64Pic---:" + request.getUrl());
         String imageUrl = PropertiesFactory.getImageUrl(request.getDebugFlag());
         String imageSavePlace = PropertiesFactory.getImagePlace(request.getDebugFlag());
-        String picName = IdGen.get().toString();
+        String picName = String.valueOf(IdGen.get().nextId());
         String picPlace = Base64Util.GenerateImage(request.getUrl().split("base64,")[1], picName, imageSavePlace);
         Pair<Boolean, String> resultPair = null;
         if (!StringUtils.isEmpty(picPlace)) {
@@ -258,7 +258,7 @@ public class FileLoadServiceImpl implements FileLoadService {
     @Override
     public SaveFileInfo upBase64(UpBase64Request request) {
         SaveFileInfo fileInfo = new SaveFileInfo();
-        String picName = IdGen.get().toString();
+        String picName = String.valueOf(IdGen.get().nextId());
         String[] spstr = request.getBase64Data().split("base64,");
         if (spstr.length < 2) {
             return fileInfo;
