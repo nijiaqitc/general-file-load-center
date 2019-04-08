@@ -31,6 +31,8 @@ public interface FileLoadService {
 
     SaveFileInfo upBase64(UpBase64Request request);
 
+    void delBannerFile(ByteRequest request);
+
     SaveFileInfo upBanner(UpBannerRequest request);
 
     @Deprecated

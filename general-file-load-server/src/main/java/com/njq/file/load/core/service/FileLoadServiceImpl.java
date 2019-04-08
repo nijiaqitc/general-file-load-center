@@ -373,6 +373,15 @@ public class FileLoadServiceImpl implements FileLoadService {
     }
 
     @Override
+    public void delBannerFile(ByteRequest request) {
+        String filePlace = PropertiesFactory.getImagePlace(request.getDebugFlag()) + "/" + request.getType().getValue() + "/" + request.getName();
+        File file = new File(filePlace);
+        if (file.exists()) {
+            file.delete();
+        }
+    }
+
+    @Override
     public SaveFileInfo upBannerByteFile(ByteRequest request) {
         return upByteFile(request, "/" + request.getType().getValue(), request.getName());
     }
