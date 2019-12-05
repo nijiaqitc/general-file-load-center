@@ -52,7 +52,7 @@ public class FileLoadServiceImpl implements FileLoadService {
         String fileUrl = PropertiesFactory.getFileUrl(request.getDebugFlag());
         try {
             String src = request.getUrl();
-            String shortName = request.getType().getValue();
+            String shortName = request.getType();
             String savePlace = PropertiesFactory.getFilePlace(request.getDebugFlag());
             String fileOldName = URLDecoder.decode(getOldName(src), "UTF-8");
             String place = getFilePlace(shortName, savePlace, fileOldName);
@@ -134,7 +134,7 @@ public class FileLoadServiceImpl implements FileLoadService {
         String imageUrl = PropertiesFactory.getImageUrl(request.getDebugFlag());
         String fileOldName = getOldName(request.getUrl());
         String fileNewName = getNewName(fileOldName);
-        String place = getFilePlace(request.getType().getValue(), imageSavePlace, fileNewName);
+        String place = getFilePlace(request.getType(), imageSavePlace, fileNewName);
         SaveFileInfo info = new SaveFileInfo();
         try {
             info.setFileNewName(fileNewName);
@@ -369,12 +369,12 @@ public class FileLoadServiceImpl implements FileLoadService {
     public SaveFileInfo upYxlByteFile(ByteRequest request) {
         String dd = DateUtil.toDateString8(new Date());
         String newName = getNewName(request.getName());
-        return upByteFile(request, "/" + request.getType().getValue() + "/" + dd, newName);
+        return upByteFile(request, "/" + request.getType() + "/" + dd, newName);
     }
 
     @Override
     public void delBannerFile(ByteRequest request) {
-        String filePlace = PropertiesFactory.getImagePlace(request.getDebugFlag()) + "/" + request.getType().getValue() + "/" + request.getName();
+        String filePlace = PropertiesFactory.getImagePlace(request.getDebugFlag()) + "/" + request.getType() + "/" + request.getName();
         File file = new File(filePlace);
         if (file.exists()) {
             file.delete();
@@ -383,7 +383,7 @@ public class FileLoadServiceImpl implements FileLoadService {
 
     @Override
     public SaveFileInfo upBannerByteFile(ByteRequest request) {
-        return upByteFile(request, "/" + request.getType().getValue(), request.getName());
+        return upByteFile(request, "/" + request.getType(), request.getName());
     }
 
     private SaveFileInfo upByteFile(ByteRequest request, String folder, String newName) {

@@ -1,7 +1,5 @@
 package com.njq.file.load.api.model;
 
-import com.njq.common.enumreg.channel.ChannelType;
-
 import java.io.Serializable;
 
 /**
@@ -10,7 +8,7 @@ import java.io.Serializable;
  */
 public class UpFileInfoRequest extends BaseRequest implements Serializable {
     private String url;
-    private ChannelType type;
+    private String type;
     private String realSavePlace;
 
     public String getUrl() {
@@ -21,11 +19,11 @@ public class UpFileInfoRequest extends BaseRequest implements Serializable {
         this.url = url;
     }
 
-    public ChannelType getType() {
+    public String getType() {
         return type;
     }
 
-    public void setType(ChannelType type) {
+    public void setType(String type) {
         this.type = type;
     }
 

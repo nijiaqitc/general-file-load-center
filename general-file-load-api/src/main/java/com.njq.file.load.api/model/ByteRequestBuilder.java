@@ -1,7 +1,5 @@
 package com.njq.file.load.api.model;
 
-import com.njq.common.enumreg.channel.ChannelType;
-
 /**
  * @author: nijiaqi
  * @date: 2019/3/26
@@ -11,7 +9,7 @@ public final class ByteRequestBuilder {
     private String cookieStr;
     private String name;
     private byte[] data;
-    private ChannelType type;
+    private String type;
 
     private ByteRequestBuilder() {
     }
@@ -40,7 +38,7 @@ public final class ByteRequestBuilder {
         return this;
     }
 
-    public ByteRequestBuilder ofType(ChannelType type) {
+    public ByteRequestBuilder ofType(String type) {
         this.type = type;
         return this;
     }

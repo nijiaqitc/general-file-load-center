@@ -1,7 +1,5 @@
 package com.njq.file.load.api.model;
 
-import com.njq.common.enumreg.channel.ChannelType;
-
 /**
  * @author: nijiaqi
  * @date: 2019/3/26
@@ -10,7 +8,7 @@ public final class UpFileInfoRequestBuilder {
     private Boolean debugFlag = false;
     private String cookieStr;
     private String url;
-    private ChannelType type;
+    private String type;
     private String realSavePlace;
 
     private UpFileInfoRequestBuilder() {
@@ -35,7 +33,7 @@ public final class UpFileInfoRequestBuilder {
         return this;
     }
 
-    public UpFileInfoRequestBuilder ofType(ChannelType type) {
+    public UpFileInfoRequestBuilder ofType(String type) {
         this.type = type;
         return this;
     }
