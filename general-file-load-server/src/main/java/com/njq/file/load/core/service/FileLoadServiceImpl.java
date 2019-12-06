@@ -3,6 +3,7 @@ package com.njq.file.load.core.service;
 import com.njq.common.exception.BaseKnownException;
 import com.njq.common.util.date.DateUtil;
 import com.njq.common.util.encrypt.Base64Util;
+import com.njq.common.util.encrypt.Md5Util;
 import com.njq.common.util.grab.UrlChangeUtil;
 import com.njq.common.util.image.ImageUtil;
 import com.njq.common.util.image.UpPicUtil;
@@ -82,7 +83,7 @@ public class FileLoadServiceImpl implements FileLoadService {
         SaveFileInfo info = new SaveFileInfo();
         try {
             logger.info("reloadPic---:" + request.getUrl());
-            info.setResultPair(Pair.of(true, ""));
+            info.setResultPair(Pair.of(true, "加载完成"));
             UrlChangeUtil.downLoad(request.getUrl(), request.getRealSavePlace(), request.getCookieStr());
         } catch (Exception e) {
             logger.error("重新加载出错-------：" + e.getMessage());
@@ -97,7 +98,7 @@ public class FileLoadServiceImpl implements FileLoadService {
         SaveFileInfo info = new SaveFileInfo();
         if (f.exists()) {
             info.setFileNewName(f.getName());
-            info.setResultPair(Pair.of(true, ""));
+            info.setResultPair(Pair.of(true, "加载完成"));
         } else {
             checkAndCreateFolder(request.getRealSavePlace());
             loadFileTaskExecutor.submit(() -> {
@@ -159,7 +160,7 @@ public class FileLoadServiceImpl implements FileLoadService {
 
     @Override
     public SaveFileInfo loadBase64(UpFileInfoRequest request) {
-        logger.info("loadbase64Pic---:" + request.getUrl());
+        logger.info("loadbase64Pic---:" + request.getUrl().substring(0, 30));
         String imageUrl = PropertiesFactory.getImageUrl(request.getDebugFlag());
         String imageSavePlace = PropertiesFactory.getImagePlace(request.getDebugFlag());
         String picName = String.valueOf(IdGen.get().nextId());
@@ -172,7 +173,7 @@ public class FileLoadServiceImpl implements FileLoadService {
         }
         SaveFileInfo info = new SaveFileInfo();
         info.setFileNewName(picName);
-        info.setFileOldName(picName);
+        info.setFileOldName(getOldName(request.getUrl()));
         info.setFilePlace(imageUrl + picPlace);
         info.setRealPlace(imageSavePlace + picPlace);
         info.setOldSrc("base64");
@@ -181,7 +182,34 @@ public class FileLoadServiceImpl implements FileLoadService {
     }
 
 
-    public static String getOldName(String src) {
+    public String generateOldName(String src) {
+        String data = src.toLowerCase().split("base64")[1];
+        if(data.length()>50) {
+            StringBuilder stb = new StringBuilder();
+            stb.append(data.substring(0, 10));
+            stb.append(data.substring(data.length()-10));
+            int mid=data.length()/2;
+            stb.append(data.substring(mid, mid+10));
+            return Md5Util.getMD5Password(stb.toString());
+        }else {
+            return Md5Util.getMD5Password(data);
+        }
+    }
+
+    private Boolean checkIsBase64(String src) {
+        if(src.length()>30) {
+            String preStr = src.substring(0, 30);
+            if(preStr.toLowerCase().startsWith("data:image/png;base64")) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public  String getOldName(String src) {
+        if(checkIsBase64(src)) {
+            return generateOldName(src);
+        }
         String[] img = src.split("\\?")[0].split("\\/");
         return img[img.length - 1];
     }
@@ -270,7 +298,7 @@ public class FileLoadServiceImpl implements FileLoadService {
         fileInfo.setFileOldName(picName);
         fileInfo.setFilePlace(imageUrl + picPlace);
         fileInfo.setRealPlace(imagePlace + picPlace);
-        fileInfo.setResultPair(Pair.of(true, ""));
+        fileInfo.setResultPair(Pair.of(true, "加载完成"));
         return fileInfo;
     }
 
@@ -402,7 +430,7 @@ public class FileLoadServiceImpl implements FileLoadService {
             UpPicUtil.upByte(request.getData(), tempFilePlace);
             fileInfo.setFilePlace(PropertiesFactory.getImageUrl(request.getDebugFlag()) + folder + "/" + newName);
             fileInfo.setRealPlace(tempFilePlace);
-            fileInfo.setResultPair(Pair.of(true, ""));
+            fileInfo.setResultPair(Pair.of(true, "加载完成"));
         } else {
             fileInfo.setResultPair(Pair.of(false, "文件已存在，上传失败！"));
         }
